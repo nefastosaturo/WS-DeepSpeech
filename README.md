@@ -37,8 +37,18 @@ or locally:
 $ cp appConfig app/appConfig
 $ gunicorn -c guConfig.py app:app
 ```
+Now you can reach the server at:
 
-in the example folder there is a simple Java client.
+```http://127.0.0.1:5000```
+
+for a cutie ```hello world```
+
+Meanwhile a thread starts and downloads DeepSpeech models if not present.
+
+### Client example
+
+In the example folder there is a simple Java client.
+
 * Choose how many connections:
 	```java
 	nrClient=2
@@ -51,13 +61,13 @@ in the example folder there is a simple Java client.
 * Run it
 
 ## Settings
-`appConfig` contains all the settings used.
+* `appConfig` contains all the settings used.
 
-On first run, DeepSpeech models will be downloaded under the `DEEPSPEECH_ROOT_PATH`.
+* On first run, DeepSpeech models will be downloaded under the `DEEPSPEECH_ROOT_PATH`.
 
-If you want more verbosity, flag `VERBOSE`/`DEBUG` to `True`
+* If you want more verbosity, flag `VERBOSE`/`DEBUG` to `True`
 
-`guConfig` contains all the settings related to GUnicorn, including the deepspeech model downloading part.
+* `guConfig` contains all the settings related to GUnicorn, including the deepspeech model downloading part.
 
 
 ## TODOs
