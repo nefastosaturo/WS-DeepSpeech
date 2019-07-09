@@ -23,8 +23,9 @@ $ pip install -r requirements.txt
 ```
 
 ## Run
+First, set up the correct `INPUT_SAMPLE_RATE` in `appConfig` according to the audio file that will be streamed to the server.
 
-if you want to use the Dockerfile just run:
+Then, if you want to use the Dockerfile just run:
 
 ```shell
 $ docker build -t deepspeech .
@@ -56,6 +57,7 @@ On first run, DeepSpeech models will be downloaded under the `DEEPSPEECH_ROOT_PA
 
 If you want more verbosity, flag `VERBOSE`/`DEBUG` to `True`
 
+`guConfig` contains all the settings related to GUnicorn, including the deepspeech model downloading part.
 
 
 ## TODOs
