@@ -1,16 +1,16 @@
 # DeepSpeech over Websocket
 
-A DeepSpeech webserver with resampling capabilities that run over websockets through Starlette.
+A [DeepSpeech](https://github.com/mozilla/DeepSpeech) webserver with resampling capabilities that run over websockets through [Starlette](https://github.com/encode/starlette).
 
 
 ## Requirements
 
 * `Python 3.6+`
-* `Starlette 0.12`
-* `Uvicorn 0.7`
-* `Gunicorn 19.9`
-* `Scipy 1.3`
-* `Webrtcvad 2.0`
+* [`Starlette 0.12`](https://github.com/encode/starlette)
+* [`Uvicorn 0.7`](https://github.com/encode/uvicorn)
+* [`Gunicorn 19.9`](https://github.com/benoitc/gunicorn)
+* [`Scipy 1.3`](https://www.scipy.org/)
+* [`Webrtcvad 2.0`](https://github.com/wiseman/py-webrtcvad)
 
 
 ## Installation
