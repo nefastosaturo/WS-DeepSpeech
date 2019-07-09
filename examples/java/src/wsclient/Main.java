@@ -24,6 +24,7 @@ public class Main {
 
 		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(fileIn);
 		
+		int nrClient=1;
 		float secsForFrame = 0.02f;
 		int samplerate = 8000;
 		int numBytes = (int) ((secsForFrame*samplerate)*2); //* bytesPerFrame; 
@@ -51,7 +52,7 @@ public class Main {
 //		and then add "wss" to uri
 
 		boolean allReady = false;
-		for(int i=0; i<6; i++){
+		for(int i=0; i<nrClient; i++){
 			WSClient c=new WSClient(new URI("ws://127.0.0.1:5000/ws"));
 			clients.add(c);
 
