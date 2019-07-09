@@ -1,0 +1,21 @@
+#general
+VERBOSE=False
+DEBUG=False
+
+INPUT_SAMPLE_RATE = 8000
+
+#DeepSpeech
+DEEPSPEECH_ROOT_PATH = models
+DEEPSPEECH_VERSION = 0.5.1
+BEAMWIDTH = 100
+MODEL = models/output_graph.pbmm
+ALPHABET = models/alphabet.txt
+LM = models/lm.binary
+TRIE= models/trie
+PRE_ALLOC_TIME = 2.0
+
+#segmentation stuff
+MIN_SPEECH_SECS = 0.05
+MIN_NOSPEECH_SECS = 0.1
+
+DECODE_TRIGGER_INTERVAL = 1.0
