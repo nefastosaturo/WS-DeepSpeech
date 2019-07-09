@@ -8,10 +8,10 @@ INPUT_SAMPLE_RATE = 8000
 DEEPSPEECH_ROOT_PATH = models
 DEEPSPEECH_VERSION = 0.5.1
 BEAMWIDTH = 100
-MODEL = models/output_graph.pbmm
-ALPHABET = models/alphabet.txt
-LM = models/lm.binary
-TRIE= models/trie
+MODEL = output_graph.pbmm
+ALPHABET = alphabet.txt
+LM = lm.binary
+TRIE= trie
 PRE_ALLOC_TIME = 2.0
 
 #segmentation stuff
