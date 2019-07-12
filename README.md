@@ -47,18 +47,21 @@ Meanwhile a thread starts and downloads DeepSpeech models if not present.
 
 ### Client example
 
-In the example folder there is a simple Java client.
+In the example folder there are two simple clients.
 
+#### Java
 * Choose how many connections:
 	```java
 	nrClient=2
 	```
 
-* Put the correct ip address:
-	```java
-	WSClient c=new WSClient(new URI("ws://127.0.0.1:5000/ws"));
+#### Python (work in progress..)
+* Just run it
+
+	```shell
+	cd examples/python
+	python simpleClient.py
 	```
-* Run it
 
 ## Settings
 * `appConfig` contains all the settings used.
@@ -71,7 +74,7 @@ In the example folder there is a simple Java client.
 
 
 ## TODOs
-* Python client example
+* Python client example with more connections
 * Manage memory leaking (avoid to force workers restart)
 * Handle async/future exceptions
 * Use a lighter docker as base image (Alpine?)

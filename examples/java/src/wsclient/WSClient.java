@@ -82,8 +82,8 @@ public class WSClient extends WebSocketClient {
 				System.out.println("voice "+probOfVoice+" classical "+probOfClassical+" hit "+probOfHit+" secondsProcessed "+secondsProcessed);
 
 				break;
-			case "TRANSCRIPTION":				
-				String transcription =  data.getString("transcription");
+			case "TRANSCRIPTION":
+				String transcription =  data.getString("result");
 				String id =  message.get("clientId").toString();
 				
 				this.timeCursor= System.currentTimeMillis();

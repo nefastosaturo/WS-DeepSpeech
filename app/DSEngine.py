@@ -87,30 +87,36 @@ class DSEngine:
         self.VADEndTrim=0
         self.secsInVADqueue=0.0
 
-        self.consume=True
 
         self.feed=False
-        self.consumerTask = self.dsAsyncLoop.create_task(self.consumer())
+        self.consumerTask = self.dsAsyncLoop.create_task(self.consumerHandler())
 
         return self
 
 
     async def enqueue(self,data):
+
         await self.msgQueue.put(data)
 
-    async def consumer(self):
+    async def consumerHandler(self):
 
-        while self.consume:
-            #logger.info("CONSUMING... %s",self.consume)
-            msg = await self.msgQueue.get()
-            await self.parseMessage(msg)
-            self.msgQueue.task_done()
+        while True:
+            try:
+                msg = await self.msgQueue.get()
+                await self.consume(msg)
+                self.msgQueue.task_done()
+            except CancelledError:
+                logger.info("Done consuming")
+                raise
+            except:
+                logger.exception("ERROR DURING CONSUME")
+                raise
 
         return True
 
-    async def parseMessage(self,msg):
-
+    async def consume(self,msg):
         if self.websocket.client_state.name=="CONNECTED":
+
             '''
             A new audio buffer is coming.
             Steps:
@@ -128,16 +134,21 @@ class DSEngine:
             '''
             if msg["type"] == "AUDIO_BUFFER":
 
+
                 samples = b64decode(msg["data"])
                 numOfSamples = len(samples)/2
+                isSpeech=False
+                try:
+                    isSpeech = self.VAD.is_speech(samples, self.inputSr)
+                except:
+                    logger.warning("VAD ERROR. hint: buffer size must be 10,20 o 30ms in duration. len buffer: %s",len(samples))
 
-                isSpeech = self.VAD.is_speech(samples, self.inputSr)
 
                 info= {
-                    "chunkNum": msg.get("count",-1),
+                    "chunkNum": msg.get("count",0),
                     "isSpeech": isSpeech
                 }
-                logger.info("TIME {:.3}".format(msg["count"]*(numOfSamples/self.inputSr)))
+                logger.info("TIME {:.3}".format(info.get("chunkNum")*(numOfSamples/self.inputSr)))
 
                 #1
                 self.VADQueue.append(samples)
@@ -156,12 +167,12 @@ class DSEngine:
                     self.noSpeechSecs += numOfSamples/self.inputSr #4
                 #3
                 if self.speechSecs>=self.minSpeechSecs and not self.feed:
-                    logger.info("self.VADStartTrimIndx: %s, queuelen %s",self.VADStartTrimIndx,len(self.VADQueue))
+                    logger.info("Voiced index: %s, buffer queue length: %s",self.VADStartTrimIndx,len(self.VADQueue))
                     self.feed = True
                     buffers = self.VADQueue[self.VADStartTrimIndx:]
 
                     samples = b''.join(buffers)
-                    logger.info("len(buffers): %s len(samples): %s",len(buffers),len(samples))
+                    logger.info("Total nr of buffers: %s nr of samples concatenated: %s",len(buffers),len(samples))
                 #4
                 if self.feed:
 
@@ -205,9 +216,9 @@ class DSEngine:
             #logger.exception("ERROR")
             logger.error("feedFuture done %s",feedFuture.done())
             logger.error("feedFuture cancelled %s",feedFuture.cancelled())
-            #self.consume=False
+
         except:
-            logger.exception("ERROR")
+            logger.exception("UKNOWN ERROR")
             raise
 
 
@@ -260,11 +271,10 @@ class DSEngine:
             self.secsInStream = 0;
             await self.sendResult(result)
         except CancelledError:
-            logger.exception("DOSTT CANCELLEDERROR")
+            logger.exception("STT TASK CANCELLED")
         except:
-            logger.exception("Unknown error")
+            logger.exception("UKNOWN ERROR")
             raise
-
     def decode(self,finishStream=False):
 
         #self.busy=True
@@ -287,11 +297,11 @@ class DSEngine:
     async def sendResult(self,result):
 
         if type(result) == str:
-            data = {"transcription":result,"metadata":{}}
+            data = {"result":result,"metadata":{}}
         else: #metadata
             transcription = ''.join(item.character for item in result.items)
             data ={
-            "transcription": transcription,
+            "result": transcription,
             "metadata":{
                     "numItems": result.num_items,
                     "probability": result.probability,
@@ -313,24 +323,28 @@ class DSEngine:
                 #await websocket.close(code=1000)
                 logger.error("ConnectionClosed %s",exc)
             except:
+                logger.exception("UKNOWN ERROR")
                 raise
 
 
     async def clear(self):
         logger.info("CLEARING")
         await self.msgQueue.join()
+
+        logger.info("JOINED")
         self.consumerTask.cancel()
         try:
             res = await self.consumerTask
-
-            logger.info("results %s",res)
         except asyncio.CancelledError:
-            logger.info("asyncio.CancelledError")
+            logger.info("Consumer task cancelled")
+        except:
+            logger.exception("UKNOWN ERROR")
+            raise
         finally:
             logger.info("Feeder done? %s",self.consumerTask.done())
             logger.info("Feeder cancelled? %s",self.consumerTask.cancelled())
             logger.info("Audio queue size: %s",self.msgQueue.qsize())
-            self.consume=False
+
 
 
     def resample(self,data):
