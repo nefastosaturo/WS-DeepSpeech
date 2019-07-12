@@ -20,7 +20,7 @@ public class Main {
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, InterruptedException, URISyntaxException {
 		System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "INFO");
 
-		File fileIn = new File("test_eng8_short.wav"); 
+		File fileIn = new File("../8khz_01.wav"); 
 
 		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(fileIn);
 		
