@@ -1,5 +1,5 @@
 deepspeech
-starlette==0.12.0
+starlette==0.25.0
 uvicorn==0.11.7
 gunicorn==19.9.0
 scipy==1.3.0
